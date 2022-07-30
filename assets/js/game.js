@@ -5,25 +5,31 @@ var randomNumber = function(min, max) {
 
     return value;
 }
+var fightOrSkip = function() {
+    var promptFight = window.prompt('Would you like to FIGHT or SKIP this battle? Enter "FIGHT" OR "SKIP" to choose.');
+
+    if (promptFight === '' || promptFight === null) {
+        window.alert('You need to provide a valid answer! Please try again.');
+        return fightOrSkip();
+    }
+    promptFight = promptFight.toLowerCase();
+    if (promptFight === 'skip') {
+        var confirmSkip = window.confirm('Are you sure you\'d like to quit?');
+        if (confirmSkip) {
+            window.alert(playerInfo.name + ' has decided to skip this fight. Goodbye!');
+            playerInfo.money = Math.max(0, playerInfo.money - 10);
+            return true;
+            shop();
+        }
+    }
+    return false;
+}
 
 var fight = function(enemy) {
     //repeat and execute as long as the enemy-robot is alive
     while (playerInfo.health > 0 && enemy.health > 0) {
-        // Ask players if theyd like to fight or skip
-        var promptFight = window.prompt("Would you like to FIGHT or SKIP this battle? Enter 'FIGHT' or 'SKIP' to choose.");
-        //if they pick skip stop loop
-        if (promptFight === "skip" || promptFight === "SKIP") {
-            //confirm player wants to skip
-            var confirmSkip = window.confirm("Are you sure you'd like to quit?");
-
-            //if yes (true), leave fight
-            if (confirmSkip) {
-                window.alert(playerInfo.name + " has decided to skip this fight. Goodbye!");
-                //subrtact money from playerInfo.money for skipping
-                playerInfo.money = Math.max(0, playerInfo.money - 10);
-                console.log("playerInfo.money", playerInfo.money);
-                break;
-            }
+        if (fightOrSkip()) {
+            break;
         }
         //remove enemy's health by subtracting the amount set in the playerInfo.attack variable
         var damage = randomNumber(playerInfo.attack - 3, playerInfo.attack);
@@ -72,7 +78,6 @@ var startGame = function () {
     for (var i = 0; i < enemyInfo.length; i++) {
         if (playerInfo.health > 0) {
             window.alert("Welcome to Robot Gladiators! Round " + (i + 1));
-            debugger;
             var pickedEnemyObj = enemyInfo[i];
             pickedEnemyObj.health = randomNumber(40, 60);
             fight(pickedEnemyObj);
